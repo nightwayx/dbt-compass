@@ -143,13 +143,33 @@ details summary:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 .rate input:focus-visible+span{outline:3px solid var(--acc);outline-offset:2px}
 .scale{font-size:.85rem;color:var(--mute);margin:4px 0 8px}
 .qh{font-weight:700;margin:18px 0 0;color:var(--mute);font-size:.95rem}
+
+.lpl{font:inherit;font-weight:500;border:1px solid #33546c;background:transparent;color:#cfe0ea;border-radius:12px;padding:9px 16px;min-height:44px;cursor:pointer;touch-action:manipulation}
+.lpl:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.nav-r{display:flex;gap:8px;align-items:center}
+#board{min-height:100vh}
+.bd-top{background:#0f2233;color:#eaf3f8;padding:18px 0 34px}
+.bd-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.bd-top h1{font-size:clamp(1.8rem,5vw,2.8rem);line-height:1.2;margin:22px 0 6px}
+.bd-top p{color:#b9cbd8;margin:0}
+.bd-body{max-width:1080px;margin:0 auto;padding:22px 22px 60px}
+.bd-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--mute);font-size:.9rem;margin-bottom:14px}
+.bd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:12px}
+.bc{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--str);border-radius:12px;padding:14px 16px}
+.bn{font-size:1.2rem;font-weight:700;overflow-wrap:anywhere}
+.bj{color:var(--str);font-weight:500;margin-top:2px;overflow-wrap:anywhere}
+.bd-empty{color:var(--mute);padding:30px 0;text-align:center}
+.bd-btn{font:inherit;font-weight:500;border:1px solid #33546c;background:transparent;color:#cfe0ea;border-radius:10px;padding:8px 16px;min-height:44px;cursor:pointer;touch-action:manipulation}
+.bd-btn.pri{background:#4fd1bd;border-color:#4fd1bd;color:#0d1a26;font-weight:700}
+.bd-btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media(max-width:640px){.bd-body{padding:16px 16px 40px}.nav-r .lpl{padding:9px 12px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01s!important}}
 </style>
 </head>
 <body>
 <section id="home">
 <div class="lp-hero"><div class="lp-wrap">
-<nav class="lp-nav"><div class="lp-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8l-2.5 5.5L8 16l2.5-5.5z" fill="currentColor"/></svg>DBT Compass</div><button class="go sm">เริ่มเลย</button></nav>
+<nav class="lp-nav"><div class="lp-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8l-2.5 5.5L8 16l2.5-5.5z" fill="currentColor"/></svg>DBT Compass</div><div class="nav-r"><button class="lpl" id="navBoard">บอร์ด</button><button class="go sm">เริ่มเลย</button></div></nav>
 <div class="lp-body"><div>
 <h1>อนาคตของคุณ เริ่มจากรู้ว่าตัวเองเก่งอะไร</h1>
 <p>เลือกทักษะที่คุณมั่นใจและที่ยังต้องพัฒนา ระบบจะแนะนำสายงานดิจิทัลที่เหมาะกับคุณ พร้อมบอกว่าควรเสริมอะไรต่อ ใช้เวลาไม่ถึง 3 นาที</p>
@@ -178,6 +198,18 @@ details summary:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 <div class="lp-cta"><div class="lp-wrap"><h2>พร้อมรู้แล้วหรือยังว่าคุณเหมาะกับสายงานไหน</h2><button class="go">เริ่มค้นหาสายงาน</button></div></div>
 </section>
 
+<section id="board" class="hide">
+<div class="bd-top"><div class="bd-body" style="padding:0 22px">
+<div class="bd-bar"><div class="lp-brand">DBT Compass</div><div class="nav-r"><button class="bd-btn" id="bdHome">← หน้าแรก</button><button class="bd-btn pri go2" id="bdStart">เริ่มประเมิน</button></div></div>
+<h1>บอร์ดสายงาน: ใครเหมาะกับอะไร</h1>
+<p>แสดงเฉพาะชื่อและสายงานอันดับ 1 ของผู้ที่ยินยอมเท่านั้น</p>
+</div></div>
+<div class="bd-body">
+<div class="bd-meta"><span id="bdCount" role="status"></span><span><button class="bd-btn" id="bdRefresh" style="color:var(--ink);border-color:var(--line)">รีเฟรช</button> <span id="bdTime"></span></span></div>
+<div class="bd-grid" id="bdGrid"></div>
+<p class="bd-empty hide" id="bdEmpty"></p>
+</div></section>
+
 <main>
 <div id="app" class="hide" style="padding-top:22px">
 <button class="brandbtn" id="tohome">← หน้าแรก</button>
@@ -198,12 +230,13 @@ details summary:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 <div id="weakChips"></div>
 <div class="info">
 <h3>ข้อมูลเพิ่มเติม (ไม่บังคับ)</h3>
-<p class="hint" style="margin-bottom:0">ใช้เพื่อสรุปผลในงานวิจัยโดยไม่ระบุตัวตน ไม่ต้องกรอกชื่อจริง</p>
+<p class="hint" style="margin-bottom:0">ใช้ชื่อเล่นหรือชื่อที่ไม่ระบุตัวตนได้ ไม่ต้องกรอกชื่อจริง</p>
 <div class="fld">
 <label>ระดับชั้น<select id="level"><option value="">ไม่ระบุ</option><option>ปวช.1</option><option>ปวช.2</option><option>ปวช.3</option><option>ปวส.1</option><option>ปวส.2</option><option>อื่น ๆ</option></select></label>
-<label>ชื่อเล่นหรือรหัสอ้างอิง<input type="text" id="nick" maxlength="40" placeholder="เช่น เดฟ หรือ A01" autocomplete="off"></label>
+<label>ชื่อเล่นที่จะแสดงบนบอร์ด (ต้องกรอกถ้าติ๊กยินยอม)<input type="text" id="nick" maxlength="40" placeholder="เช่น เดฟ" autocomplete="off"></label>
 </div>
-<label class="agree"><input type="checkbox" id="consent"><span>ยินยอมให้บันทึกผลการเลือกทักษะและสายงานที่ได้รับ ลงใน Google Sheet ของโครงงาน เพื่อใช้วิเคราะห์ในงานวิจัยแบบไม่ระบุตัวตน</span></label>
+<label class="agree"><input type="checkbox" id="consent"><span>ยินยอมให้บันทึกผลลงใน Google Sheet ของโครงงานเพื่อใช้ในงานวิจัย และแสดงชื่อเล่นกับสายงานอันดับ 1 ของฉันบนบอร์ดสายงานของเว็บไซต์ (ถ้าไม่ติ๊ก จะไม่บันทึกและไม่แสดงบนบอร์ด)</span></label>
+<p class="msg" id="nickWarn" role="alert"></p>
 </div>
 <div class="row"><button class="btn ghost" id="p2">ย้อนกลับ</button><span class="count" id="c2">เลือกแล้ว 0 ข้อ</span><button class="btn" id="n2" disabled>ดูสายงานที่เหมาะกับฉัน</button></div>
 </section>
@@ -220,7 +253,7 @@ details summary:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
 <button class="btn" id="satBtn" style="width:100%">ส่งแบบประเมิน</button>
 <p class="msg" id="satMsg" role="status"></p>
 </details>
-<div class="row"><button class="btn ghost" id="again">เริ่มใหม่</button></div>
+<div class="row"><button class="btn ghost" id="toBoard">ดูบอร์ดสายงาน</button><button class="btn ghost" id="again">เริ่มใหม่</button></div>
 <p class="note">ผลลัพธ์นี้เป็นเพียงแนวทางเบื้องต้นจากข้อมูลที่คุณเลือก ไม่ใช่คำตอบตายตัว ควรใช้ประกอบกับการพูดคุยกับอาจารย์และผู้ที่ทำงานจริง</p>
 </section>
 </div>
@@ -292,7 +325,7 @@ function render(){
   requestAnimationFrame(()=>setTimeout(()=>document.querySelectorAll(".meter b").forEach(b=>b.style.width=b.dataset.w+"%"),50));
 }
 chips("strChips","s");chips("weakChips","w");refresh();
-function go(){window.scrollTo(0,0);$("home").classList.add("hide");$("app").classList.remove("hide");show(1)}
+function go(){window.scrollTo(0,0);stopBoard();$("board").classList.add("hide");$("home").classList.add("hide");$("app").classList.remove("hide");show(1)}
 document.querySelectorAll(".go").forEach(b=>b.onclick=go);
 $("tohome").onclick=()=>{$("app").classList.add("hide");$("home").classList.remove("hide");window.scrollTo({top:0})};
 $("sk").textContent=Object.keys(SKILLS).length;$("cr").textContent=CAREERS.length;
@@ -316,15 +349,49 @@ $("satBtn").onclick=async()=>{
   $("satBtn").disabled=res==="ok";
 };
 $("n2").onclick=async()=>{
+  if($("consent").checked&&!$("nick").value.trim()){$("nickWarn").textContent="กรุณากรอกชื่อเล่นที่จะแสดงบนบอร์ด หรือเอาเครื่องหมายยินยอมออก";$("nick").focus();return}
   render();show(3);
   const r=calc(),msg=$("saveMsg");
   RID="R"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-  if(!$("consent").checked){msg.textContent="ผลนี้ไม่ได้ถูกบันทึกลง Google Sheet เพราะคุณไม่ได้ติ๊กยินยอม";return}
+  if(!$("consent").checked){msg.textContent="ผลนี้ไม่ได้ถูกบันทึกและไม่แสดงบนบอร์ด เพราะคุณไม่ได้ติ๊กยินยอม";return}
   msg.textContent="กำลังบันทึกผล…";
-  const res=await post({type:"result",id:RID,level:$("level").value,nick:$("nick").value.trim().slice(0,40),strengths:[...st.s].map(k=>SKILLS[k]),weaknesses:[...st.w].map(k=>SKILLS[k]),top3:r.map(c=>({n:c.n,pct:c.pct}))});
-  msg.textContent=res==="ok"?"ส่งผลของคุณไปยัง Google Sheet แล้ว ✓ (ไม่เก็บชื่อจริงหรือข้อมูลที่ระบุตัวตน)":res==="noconfig"?"ยังไม่ได้ตั้งค่าการเชื่อมต่อ Google Sheet":"บันทึกไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่";
+  const res=await post({type:"result",id:RID,board:true,level:$("level").value,nick:$("nick").value.trim().slice(0,40),strengths:[...st.s].map(k=>SKILLS[k]),weaknesses:[...st.w].map(k=>SKILLS[k]),top3:r.map(c=>({n:c.n,pct:c.pct}))});
+  msg.textContent=res==="ok"?"ส่งผลของคุณแล้ว ✓ ชื่อเล่นกับสายงานอันดับ 1 จะขึ้นบนบอร์ดสายงาน":res==="noconfig"?"ยังไม่ได้ตั้งค่าการเชื่อมต่อ Google Sheet":"บันทึกไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่";
 };
 $("again").onclick=()=>{st.s.clear();st.w.clear();refresh();document.querySelectorAll("#satForm input").forEach(i=>i.checked=false);$("comment").value="";$("satMsg").textContent="";$("satBtn").disabled=false;$("sat").open=false;$("saveMsg").textContent="";show(1)};
+
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let bdTimer=null;
+function jsonp(extra){return new Promise((res,rej)=>{const cb="cb"+Date.now()+Math.floor(Math.random()*1e4),sc=document.createElement("script");
+  const clean=()=>{clearTimeout(t);delete window[cb];sc.remove()};const t=setTimeout(()=>{clean();rej(new Error("timeout"))},15000);
+  window[cb]=d=>{clean();res(d)};sc.onerror=()=>{clean();rej(new Error("fail"))};
+  sc.src=SHEET_URL+(SHEET_URL.includes("?")?"&":"?")+extra+"&callback="+cb;document.head.appendChild(sc)})}
+async function loadBoard(){
+  const grid=$("bdGrid"),empty=$("bdEmpty"),cnt=$("bdCount");
+  if(!SHEET_URL){grid.innerHTML="";empty.textContent="ยังไม่ได้ตั้งค่าการเชื่อมต่อ Google Sheet";empty.classList.remove("hide");cnt.textContent="";return}
+  try{
+    const d=await jsonp("action=board");
+    const it=(d&&d.items)||[];
+    grid.innerHTML=it.map(x=>`<div class="bc"><div class="bn">${esc(x.name)}</div><div class="bj">${esc(x.career)}</div></div>`).join("");
+    cnt.textContent=it.length?`ทั้งหมด ${it.length} คน`:"";
+    empty.textContent="ยังไม่มีใครแสดงบนบอร์ด ผู้ที่ติ๊กยินยอมหลังทำแบบประเมินจะขึ้นที่นี่";
+    empty.classList.toggle("hide",it.length>0);
+    $("bdTime").textContent="อัปเดตล่าสุด "+new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
+  }catch(e){
+    empty.textContent="โหลดบอร์ดไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตหรือการตั้งค่า Apps Script แล้วกดรีเฟรช";empty.classList.remove("hide");
+  }
+}
+function stopBoard(){clearInterval(bdTimer);bdTimer=null}
+function openBoard(){
+  window.scrollTo(0,0);$("home").classList.add("hide");$("app").classList.add("hide");$("board").classList.remove("hide");
+  try{history.replaceState(null,"","#board")}catch(e){}
+  loadBoard();stopBoard();bdTimer=setInterval(loadBoard,30000);
+}
+function closeBoard(){stopBoard();$("board").classList.add("hide");$("home").classList.remove("hide");window.scrollTo(0,0);try{history.replaceState(null,"",location.pathname)}catch(e){}}
+$("navBoard").onclick=openBoard;$("toBoard").onclick=openBoard;$("bdHome").onclick=closeBoard;$("bdRefresh").onclick=loadBoard;
+$("bdStart").onclick=()=>{try{history.replaceState(null,"",location.pathname)}catch(e){}go()};
+$("nick").addEventListener("input",()=>{$("nickWarn").textContent=""});
+if(location.hash==="#board")openBoard();
 </script>
 </body>
 </html>
