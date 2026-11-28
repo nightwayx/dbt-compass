@@ -363,7 +363,7 @@ $("again").onclick=()=>{st.s.clear();st.w.clear();refresh();document.querySelect
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let bdTimer=null;
 function jsonp(extra){return new Promise((res,rej)=>{const cb="cb"+Date.now()+Math.floor(Math.random()*1e4),sc=document.createElement("script");
-  const clean=()=>{clearTimeout(t);delete window[cb];sc.remove()};const t=setTimeout(()=>{clean();rej(new Error("timeout"))},15000);
+  const clean=()=>{clearTimeout(t);delete window[cb];sc.remove()};const t=setTimeout(()=>{clean();rej(new Error("timeout"))},10000);
   window[cb]=d=>{clean();res(d)};sc.onerror=()=>{clean();rej(new Error("fail"))};
   sc.src=SHEET_URL+(SHEET_URL.includes("?")?"&":"?")+extra+"&callback="+cb;document.head.appendChild(sc)})}
 async function loadBoard(){
@@ -378,7 +378,7 @@ async function loadBoard(){
     empty.classList.toggle("hide",it.length>0);
     $("bdTime").textContent="อัปเดตล่าสุด "+new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
   }catch(e){
-    empty.textContent="โหลดบอร์ดไม่สำเร็จ ตรวจสอบอินเทอร์เน็ตหรือการตั้งค่า Apps Script แล้วกดรีเฟรช";empty.classList.remove("hide");
+    empty.innerHTML='โหลดบอร์ดไม่สำเร็จ สาเหตุที่พบบ่อยคือยังไม่ได้ Deploy Apps Script เป็นเวอร์ชันใหม่ หรือสิทธิ์เข้าถึงไม่ใช่ "ทุกคน"<br><a href="'+SHEET_URL+'?action=board" target="_blank" rel="noopener" style="color:var(--str);font-weight:700">เปิดลิงก์ทดสอบ</a> (ถ้าเห็นข้อมูลที่ขึ้นต้นด้วย {"ok":true แปลว่าฝั่ง Google ปกติ)';empty.classList.remove("hide");
   }
 }
 function stopBoard(){clearInterval(bdTimer);bdTimer=null}
